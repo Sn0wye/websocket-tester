@@ -5,6 +5,8 @@ import superjson from 'superjson';
 export type Storage = {
   storage: Map<string, string>;
   setStorage: (key: string, value: string) => void;
+  renameKey: (oldKey: string, newKey: string) => void;
+  removeKey: (key: string) => void;
 };
 
 export const useStorage = create(
@@ -15,6 +17,25 @@ export const useStorage = create(
         set(state => {
           const newStorage = new Map(state.storage);
           newStorage.set(key, value);
+          return { storage: newStorage };
+        });
+      },
+      renameKey: (oldKey: string, newKey: string) => {
+        set(state => {
+          if (!state.storage.has(oldKey)) return state;
+
+          const newStorage = new Map(state.storage);
+          newStorage.set(newKey, newStorage.get(oldKey) as string);
+          newStorage.delete(oldKey);
+          return { storage: newStorage };
+        });
+      },
+      removeKey: (key: string) => {
+        set(state => {
+          if (!state.storage.has(key)) return state;
+
+          const newStorage = new Map(state.storage);
+          newStorage.delete(key);
           return { storage: newStorage };
         });
       }

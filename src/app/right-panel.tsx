@@ -1,9 +1,12 @@
+'use client';
+
 import { useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Editor } from '@/components/editor';
 import { useStorage } from '@/hooks/storage';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { socket } from './left-panel';
 
 export function RightPanel() {
   const [selectedTab, setSelectedTab] = useState('teste');
@@ -14,7 +17,7 @@ export function RightPanel() {
 
   return (
     <div className='w-full flex flex-col h-full'>
-      <nav className='flex items-center bg-zinc-950'>
+      <nav className='flex items-center bg-zinc-950 h-[40px]'>
         {tabs.map(tab => (
           <TabButton
             key={tab}
@@ -40,7 +43,14 @@ export function RightPanel() {
         <Editor tabName={selectedTab} />
       </main>
 
-      <footer className='bg-zinc-950 flex p-2 w-full items-center justify-end'>
+      <footer className='bg-zinc-950 flex p-2 w-full items-center justify-end gap-2'>
+        <Button
+          onClick={() => {
+            socket.emit('ping');
+          }}
+        >
+          Ping
+        </Button>
         <Button
           variant='destructive'
           onClick={() => {
@@ -98,7 +108,7 @@ export function TabButton({
       onClick={() => onSelectTab(tabName)}
       onDoubleClick={handleDoubleClick}
       className={cn(
-        'bg-transparent border-0 text-zinc-100 outline-none text-sm py-2 px-3 cursor-pointer flex items-center gap-3',
+        'h-[40px] bg-transparent border-0 text-zinc-100 outline-none text-sm py-2 px-3 cursor-pointer flex items-center gap-3',
         isSelected && 'bg-white/5'
       )}
     >

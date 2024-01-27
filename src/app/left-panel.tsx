@@ -15,10 +15,6 @@ interface ClientToServerEvents {
   joinRoom: (roomCode: string) => void;
 }
 
-export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-  'http://localhost:8080'
-);
-
 export function LeftPanel() {
   const [roomCode, setRoomCode] = useState('ASD123');
   const [messageHistory, setMessageHistory] = useState<
@@ -28,6 +24,22 @@ export function LeftPanel() {
     }[]
   >([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [socket] = useState(() => {
+    const s: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+      'http://localhost:8080',
+      {
+        extraHeaders: {
+          // eslint-disable-next-line camelcase
+          auth_session: '4329buk9h1f2e3cxb5ipknij5e991t1skwm51qn6'
+        },
+        query: {
+          roomCode: 'ASD123'
+        }
+      }
+    );
+
+    return s;
+  });
 
   useEffect(() => {
     socket.connect();
